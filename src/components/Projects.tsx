@@ -28,7 +28,7 @@ function Projects() {
       .catch((error) => {
         setError("Failed to fetch projects: " + error.message);
       });
-  });
+  }, []);
 
   if (error) {
     return <Alert colorScheme="red">{error}</Alert>;
