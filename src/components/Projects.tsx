@@ -55,13 +55,15 @@ function Projects() {
       </Thead>
       <Tbody>
         {projects.map((project) => (
-          <Tr key={project.id}>
+          <Tr key={project.name}>
             <Td>{project.name}</Td>
             <Td>
-              <Visibility project={project} />
-              <Link ml={2} isExternal href={project.web_url}>
-                <ExternalLinkIcon />
-              </Link>
+              <Visibility project={project.gitlab} />
+              {project.gitlab && (
+                <Link ml={2} isExternal href={project.gitlab.web_url}>
+                  <ExternalLinkIcon />
+                </Link>
+              )}
             </Td>
             <Td>
               <Visibility project={project.github} />
@@ -72,10 +74,10 @@ function Projects() {
               )}
             </Td>
             <Td>
-              <Mirror projectId={project.id} />
+              <Mirror projectId={project.gitlab?.id} />
             </Td>
             <Td>
-              <PipelineStatus projectId={project.id} />
+              <PipelineStatus projectId={project.gitlab?.id} />
             </Td>
           </Tr>
         ))}

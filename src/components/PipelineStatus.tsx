@@ -10,7 +10,7 @@ import { Pipeline } from "../types";
 import { getPipeline } from "../repository";
 
 type PipelineStatusProps = {
-  projectId: string;
+  projectId?: string;
 };
 
 const PipelineStatus: React.FC<PipelineStatusProps> = ({ projectId }) => {
@@ -18,6 +18,10 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ projectId }) => {
   const [fetching, setFetching] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!projectId) {
+      return;
+    }
+
     setFetching(true);
 
     getPipeline(projectId).then((pipeline) => {
@@ -43,7 +47,7 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ projectId }) => {
   }
 
   if (pipeline.status === "running") {
-    return <TimeIcon color="yellow" />;
+    return <TimeIcon color="orange" />;
   }
 
   return <QuestionIcon color="gray" />;

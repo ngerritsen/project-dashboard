@@ -4,7 +4,7 @@ import { RemoteMirror } from "../types";
 import { getMirror } from "../repository";
 
 type MirrorProps = {
-  projectId: string;
+  projectId?: string;
 };
 
 const Mirror: React.FC<MirrorProps> = ({ projectId }) => {
@@ -12,6 +12,10 @@ const Mirror: React.FC<MirrorProps> = ({ projectId }) => {
   const [fetching, setFetching] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!projectId) {
+      return;
+    }
+
     setFetching(true);
 
     getMirror(projectId).then((mirror) => {
@@ -32,7 +36,7 @@ const Mirror: React.FC<MirrorProps> = ({ projectId }) => {
     return <CheckIcon color="green" />;
   }
 
-  return <WarningTwoIcon color="yellow" />;
+  return <WarningTwoIcon color="orange" />;
 };
 
 export default Mirror;

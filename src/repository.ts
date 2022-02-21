@@ -10,19 +10,33 @@ import config from "../etc/config";
 import { get } from "./utils";
 
 export async function getProjects(): Promise<Project[]> {
-  const [projects, gitHubProjects] = await Promise.all([
+  const [gitLabProjects, githubProjects] = await Promise.all([
     get<GitlabProject[]>(
       `${GITLAB_API}/users/ngerritsen/projects?private_token=${config.gitlabToken}&per_page=100&order_by=name&sort=asc`
     ),
-    get<GithubProject[]>(`${GITHUB_API}/users/ngerritsen/repos`, {
-      Authorization: `token ${config.githubToken}`,
-    }),
+    get<GithubProject[]>(
+      `${GITHUB_API}/user/repos?per_page=100&affiliation=owner`,
+      {
+        headers: {
+          Authorization: `token ${config.githubToken}`,
+        },
+      }
+    ).then((projects) => projects.filter((project) => !project.fork)),
   ]);
 
-  return projects.map((project: GitlabProject) => ({
-    ...project,
-    github: gitHubProjects.find((p: any) => p.name === project.name),
+  const projectsFromGitlab = gitLabProjects.map((project: GitlabProject) => ({
+    name: project.name,
+    gitlab: project,
+    github: githubProjects.find((p: any) => p.name === project.name),
   }));
+
+  const orphanGithubProjects = githubProjects
+    .filter(
+      (project) => !projectsFromGitlab.some((p) => p.name === project.name)
+    )
+    .map((project) => ({ github: project, name: project.name }));
+
+  return [...projectsFromGitlab, ...orphanGithubProjects];
 }
 
 export async function getMirror(

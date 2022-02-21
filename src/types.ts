@@ -9,6 +9,7 @@ export interface GitlabProject {
 export interface GithubProject {
   id: string;
   name: string;
+  fork: boolean;
   visibility: string;
   archived: boolean;
   html_url: string;
@@ -23,6 +24,8 @@ export interface RemoteMirror {
   update_status: string;
 }
 
-export interface Project extends GitlabProject {
+export interface Project {
+  name: string;
   github?: GithubProject;
+  gitlab?: GitlabProject;
 }
